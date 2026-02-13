@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grocery & Meal Planner</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #eef5ee;
+            padding: 20px;
+        }
+        .box {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        button {
+            padding: 6px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Grocery List and Meal Planning App</h2>
+
+<div class="box">
+    <h3>Grocery List( add the price and the expiration dates)</h3>
+    <input type="text" id="grocery">
+    <button onclick="addGrocery()">Add</button>
+    <p id="groceryOutput"></p>
+</div>
+
+<div class="box">
+    <h3>Meal Planning</h3>
+    <input type="text" id="meal">
+    <button onclick="addMeal()">Add</button>
+    <p id="mealOutput"></p>
+</div>
+
+<div class="box">
+    <h3>Donate Food</h3>
+    <button onclick="donateFood()">Donate Extra Food</button>
+    <p id="donateMessage"></p>
+    <input type="text" id="adress">
+<button onclick="showAdress()">Add adress</button>
+
+<p id="adressText"></p>
+
+</div>
+
+<script>
+    function addGrocery() {
+        var item = document.getElementById("grocery").value;
+        document.getElementById("groceryOutput").innerHTML += item + "<br>";
+        document.getElementById("grocery").value = "";
+    }
+
+    function addMeal() {
+        var meal = document.getElementById("meal").value;
+        document.getElementById("mealOutput").innerHTML += meal + "<br>";
+        document.getElementById("meal").value = "";
+    }
+
+    function donateFood() {
+        document.getElementById("donateMessage").innerHTML =
+        "Please add your adress down here.";
+    }
+    function showAdress() {
+    var a = document.getElementById("adress").value;
+    document.getElementById("adressText").innerHTML = a;
+}
+</script>
+
+</body>
+</html>
