@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grocery & Meal Planner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f7f3;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2e7d32;
+        }
+
+        .box {
+            background-color: #ffffff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border-left: 6px solid #81c784;
+        }
+
+        h3 {
+            color: #388e3c;
+        }
+
+        input {
+            padding: 8px;
+            width: 90%;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 6px 10px;
+            background-color: #66bb6a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .remove {
+            background-color: #e57373;
+        }
+
+        .warning { color: orange; font-weight: bold; }
+        .expired { color: red; font-weight: bold; }
+        .safe { color: green; }
+
+        .small {
+            font-size: 12px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Aegreen - The Smart and Sustainable Grocery Planer</h2>
+
+<div class="box">
+    <h3>Grocery List</h3>
+
+    <input type="text" id="grocery" placeholder="Item name">
+    <input type="date" id="expiry">
+    <button onclick="addGrocery()">Add Item</button>
+
+    <p id="errorMessage" class="expired"></p>
+    <div id="groceryOutput"></div>
+</div>
+
+<div class="box">
+    <h3>Meal Planner</h3>
+    <p class="small">Food category is decided automatically</p>
+    <div id="mealOutput"></div>
+</div>
+
+<div class="box">
+    <h3>Food Donation</h3>
+
+    <input type="text" id="location" placeholder="Enter city (Bangalore, Mumbai, Delhi)">
+    <input type="text" id="address" placeholder="Enter pickup address">
+    <input type="text" id="phone" placeholder="Enter phone number">
+
+    <button onclick="findCenters()">Find Donation Centers</button>
+
+    <p id="donateMessage"></p>
+</div>
+
+
+<div class="box">
+    <button onclick="clearAll()">Clear All</button>
+</div>
+
+<script>
+function addGrocery() {
+    var itemInput = document.getElementById("grocery").value;
+    var item = itemInput.toLowerCase();
+    var expiry = document.getElementById("expiry").value;
+    var error = document.getElementById("errorMessage");
+
+    if (itemInput == "") {
+        error.innerHTML = "No item selected!";
+        return;
+    }
+
+    if (expiry == "") {
+        error.innerHTML = "Please select an expiry date!";
+        return;
+    }
+
+    var category = "";
+    var isFood = true;
+
+    if (item.includes("rice") || item.includes("bread") || item.includes("pasta") ||
+        item.includes("potato") || item.includes("banana") || item.includes("wheat")) {
+        category = "Carbohydrates";
+    }
+    else if (item.includes("egg") || item.includes("lentil") || item.includes("chicken") ||
+             item.includes("fish") || item.includes("milk") || item.includes("cheese")) {
+        category = "Proteins";
+    }
+    else if (item.includes("oil") || item.includes("butter") ||
+             item.includes("nuts") || item.includes("avocado")) {
+        category = "Fats";
+    }
+    else {
+        isFood = false;
+    }
+
+    if (!isFood) {
+        error.innerHTML = "Unknown food item. Please enter a valid food.";
+        return;
+    }
+
+    error.innerHTML = "";
+
+    var today = new Date();
+    var expiryDate = new Date(expiry);
+    var status = "";
+    var className = "";
+
+    if (expiryDate <= today) {
+        status = "Expired";
+        className = "expired";
+    } else {
+        var diff = (expiryDate - today) / (1000 * 60 * 60 * 24);
+        if (diff <= 3) {
+            status = "Expiring Soon";
+            className = "warning";
+        } else {
+            status = "Safe";
+            className = "safe";
+        }
+    }
+
+    document.getElementById("groceryOutput").innerHTML +=
+        "<p class='" + className + "'>" +
+        itemInput + " (" + status + ")" +
+        "<button class='remove' onclick='this.parentElement.remove()'>Remove</button>" +
+        "</p>";
+
+    document.getElementById("mealOutput").innerHTML +=
+        "<p>" + itemInput + " → " + category + "</p>";
+
+    document.getElementById("grocery").value = "";
+    document.getElementById("expiry").value = "";
+}
+
+function findCenters() {
+    var place = document.getElementById("location").value.toLowerCase();
+    var address = document.getElementById("address").value;
+    var phone = document.getElementById("phone").value;
+    var result = "";
+
+    if (place == "" || address == "" || phone == "") {
+        document.getElementById("donateMessage").innerHTML =
+        "Please enter city, address, and phone number.";
+        return;
+    }
+
+    if (phone.length != 10) {
+        document.getElementById("donateMessage").innerHTML =
+        "Please enter a valid 10-digit phone number.";
+        return;
+    }
+
+    if (place == "bangalore") {
+        result = "Akshaya Patra, Robin Hood Army, Feeding India, Iskcon Food Relief, Bangalore Food Bank";
+    }
+    else if (place == "mumbai") {
+        result = "Robin Hood Army, Feeding India, Annakshetra Foundation, Mumbai Roti Bank, Sneha Foundation";
+    }
+    else if (place == "delhi") {
+        result = "Feeding India, Robin Hood Army, Akshaya Patra, Delhi Food Bank, Hemkunt Foundation";
+    }
+    else {
+        result = "Local Food Bank, Community Kitchen, NGO Food Drive, Shelter Donation Center, Volunteer Food Group";
+    }
+
+    document.getElementById("donateMessage").innerHTML =
+        "Nearby donation centers:<br>" + result +
+        "<br><br>Go to any one of these locations or someone will come<br>" +
+        "<br><br>Pickup address:<br>" + address +
+        "<br><br>Contact number:<br>" + phone;
+}
+
+function clearAll() {
+    document.getElementById("groceryOutput").innerHTML = "";
+    document.getElementById("mealOutput").innerHTML = "";
+    document.getElementById("donateMessage").innerHTML = "";
+    document.getElementById("errorMessage").innerHTML = "";
+}
+</script>
+
+</body>
+</html>
